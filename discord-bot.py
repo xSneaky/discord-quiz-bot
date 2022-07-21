@@ -44,3 +44,5 @@ async def give_question(ctx):
         await ctx.send("You can't answer sorry")
 
 bot.run(token)
+
+this is a test
