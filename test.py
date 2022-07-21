@@ -20,7 +20,7 @@ class DataBaseConnection():
     def get_quesstion(self):
         quesion_bank = {}
         random_question_bank = {}
-
+        counter = 1
         #a = self.conn.execute('SELECT id FROM Questions WHERE id = ?', ("",))
         get_last_question = self.conn.execute("SELECT id FROM Questions ORDER BY id DESC LIMIT 1")
         pull_random_question = self.conn.execute('SELECT * FROM Questions WHERE id = ?', (random.randint(1, get_last_question.fetchall()[0][0]),))
@@ -29,7 +29,7 @@ class DataBaseConnection():
         quesion_bank[2] = question[0][3]
         quesion_bank[3] = question[0][4]
         quesion_bank[4] = question[0][5]
-        question[0][1]
+        embed=discord.Embed(title=question[0][1], color=0x1a5fb4)
         for xx in range(1, 5):
             #print(quesion_bank[xx])
             num, qu = random.choice(list(quesion_bank.items()))
@@ -38,6 +38,10 @@ class DataBaseConnection():
 
         for bb in random_question_bank.items():
             print(bb[1])
+            embed.add_field(name=counter + ") " + bb[1], value="", inline=False)
+            counter += 1
+        
+        await ctx.send(embed=embed)
 
         imp = int(input(": "))
 

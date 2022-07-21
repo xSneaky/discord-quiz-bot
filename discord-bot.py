@@ -38,18 +38,20 @@ aa = DataBaseConnection("discord-quiz-bot/questions.db") #.add_to_database("What
 async def give_question(ctx):
     quesion_bank = {}
     random_question_bank = {}
+    counter = 1
 
     user_discord_user = ctx.message.author.id
     random_number = random.randint(1, 2)
     question = DataBaseConnection("discord-quiz-bot/questions.db").get_quesstion()
 
-    await ctx.send(question[0][1])
     
     quesion_bank[1] = question[0][2]
     quesion_bank[2] = question[0][3]
     quesion_bank[3] = question[0][4]
     quesion_bank[4] = question[0][5]
-    question[0][1]
+    
+    embed=discord.Embed(title=question[0][1], color=0x1a5fb4)
+
     
     for xx in range(1, 5):
         #print(quesion_bank[xx])
@@ -58,9 +60,9 @@ async def give_question(ctx):
         random_question_bank[xx] = qu
 
     for bb in random_question_bank.items():
-        await ctx.send(bb[1])
-
-
+        #print(bb[1])
+        embed.add_field(name=str(counter) + ") " + bb[1], value="-----", inline=False)
+        counter += 1
 
     def check(m):
         global user_answer
@@ -69,6 +71,8 @@ async def give_question(ctx):
         user_id = m.author.id
         return m.content
     
+    await ctx.send(embed=embed)
+
     msg = await bot.wait_for("message", check=check)
     if user_id == user_discord_user:
         if random_question_bank[int(user_answer)] == str(question[0][5]):
