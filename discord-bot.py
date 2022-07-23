@@ -34,6 +34,7 @@ class DataBaseConnection():
             
 aa = DataBaseConnection("discord-quiz-bot/questions.db") #.add_to_database("What layer is Application?", "Layer 4", "Layer 2", "Layer 8", "Layer 7")
 
+
 @bot.command()
 async def give_question(ctx):
     quesion_bank = {}
@@ -50,8 +51,8 @@ async def give_question(ctx):
     quesion_bank[3] = question[0][4]
     quesion_bank[4] = question[0][5]
     
-    embed=discord.Embed(title=question[0][1], color=0x1a5fb4)
-
+    embed=discord.Embed(title=question[0][1], color=0x1a5fb4, description="")
+ 
     
     for xx in range(1, 5):
         #print(quesion_bank[xx])
@@ -60,8 +61,15 @@ async def give_question(ctx):
         random_question_bank[xx] = qu
 
     for bb in random_question_bank.items():
-        #print(bb[1])
-        embed.add_field(name=str(counter) + ") " + bb[1], value="-----", inline=False)
+        if counter == 1:
+            emoji = ":one:"
+        elif counter == 2:
+            emoji = ":two:"
+        elif counter == 3:
+            emoji = ":three:"
+        else:
+            emoji = ":four:"
+        embed.add_field(name=str(emoji) + " " + bb[1], value="-", inline=False)
         counter += 1
 
     def check(m):
@@ -70,20 +78,43 @@ async def give_question(ctx):
         global user_id
         user_id = m.author.id
         return m.content
+
+    print_question = True
     
-    await ctx.send(embed=embed)
+    while True:
+        try:
+            if print_question == True:
+                await ctx.send(embed=embed)
+                print_question = False
 
-    msg = await bot.wait_for("message", check=check)
-    if user_id == user_discord_user:
-        if random_question_bank[int(user_answer)] == str(question[0][5]):
-            await ctx.send("Correct")
-        else:
-            await ctx.send("Wrong")
-    else:
-        await ctx.send("You can't answer sorry")
+            msg = await bot.wait_for("message", check=check, timeout=10)
+            if msg is not None:
+                if user_id == user_discord_user:
+                    if random_question_bank[int(user_answer)] == str(question[0][5]):
+                        await ctx.send("Correct")
+                        break
+                    else:
+                        await ctx.send("Wrong")
+                        break
+                else:
+                    await ctx.send("You can't answer sorry")
+                    
+        except asyncio.TimeoutError:
+            await ctx.send("You ran out of time!")
+            break
+        except KeyError:
+            await ctx.send("Try again, 1, 2, 3 or 4")
+            print_question = True
+        except ValueError:
+            await ctx.send("Try again, 1, 2, 3 or 4")
+            print_question = True
+        except Exception as e:
+            await ctx.send("ERROR: " + str(e))
 
-    print(random_question_bank[int(user_answer)])
-    print(question[0][5])
+
+
+        
+    
     
 
 
